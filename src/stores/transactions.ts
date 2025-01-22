@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ITransaction } from '@/interfaces/ITransaction';
+import axios from 'axios';
 
 export const useTransactionStore = defineStore('transactions', {
     state: () => ({
@@ -10,39 +11,67 @@ export const useTransactionStore = defineStore('transactions', {
 
     actions: {
         async fetchTransactions() {
-            // Simulando mi llamada API
-            const data: ITransaction[] = [];
-            this.transactions = data;
+            try {
+                const response = await axios.get(process.env.VUE_APP_URL_API); 
+                this.transactions = response.data; // Asigna los datos obtenidos al estado de las transacciones
+                return response.data;
+            } catch (error) {
+                console.error('Error al obtener las transacciones:', error);
+            }
         },
 
-        addTransaction(transaction: ITransaction) {
-            
-            
-            this.transactions.push(transaction);
-            console.log("Transacciones actuales:", this.transactions);  // Verifica que el estado de las transacciones se actualiza
+        async addTransaction(transaction: ITransaction) {
+            try {
+                const response = await axios.post(process.env.VUE_APP_URL_API, transaction);
+                await this.fetchTransactions(); // Hacemos la recarga para los nuevos datos ingresados
+            } catch (error) {
+                console.error('Error al obtener las transacciones:', error);
+            }
         },        
 
-        updateTransaction(updatedTransaction: ITransaction) {
-            console.log("GUARDAR :", updatedTransaction)
-            const index = this.transactions.findIndex(t => t.transaccion_id === updatedTransaction.transaccion_id);
-            if (index !== -1) {
-                // Actualiza la transacción en el índice encontrado
-                this.transactions[index] = updatedTransaction;
-            }
+        async updateTransaction(updatedTransaction: ITransaction) {
+            try {
+                
+                console.log("URL :", updatedTransaction._id)
+                const response = await axios.put(`${process.env.VUE_APP_URL_API}/${updatedTransaction._id}`, updatedTransaction);
+                console.log("res :", response)
+                await this.fetchTransactions(); 
+            } catch (error) {
+                console.error('Error al obtener las transacciones:', error);
+            }  
         },
 
-        deleteTransaction(id: number) {
-            //this.transactions = this.transactions.filter(t => t.transaccion_id !== id); Elminación definitivamente
-            const index = this.transactions.findIndex(t => t.transaccion_id === id);
-            if (index !== -1) {
-                // Actualiza la transacción en el índice encontrado
-                if(this.transactions[index].status === "inactiva"){
-                    this.transactions[index].status = "activa";
-                } else {
-                    this.transactions[index].status = "inactiva";
-                }
-                
-            }
+        async deleteTransaction(id: number) {
+                try {
+                    const response = await axios.delete(`${process.env.VUE_APP_URL_API}/${id}`);
+                    await this.fetchTransactions(); 
+                } catch (error) {
+                    console.error('Error al obtener las transacciones:', error);
+                }  
+        },
+        async inactiveTransaction(id: number) {
+
+                try {
+
+                    
+                    const data = await this.fetchTransactions();
+                    /*const search = data.find((t: ITransaction) => t._id === id);
+                    if(search !== null || search !== undefined){
+                        // Actualiza la transacción en el índice encontrado
+                        search.status = search.status === "inactiva" ? "activa" : "inactiva";
+
+                        const response = await axios.put(`${process.env.VUE_APP_URL_API}/${search._id}`, search);
+                        await this.fetchTransactions(); 
+                    }*/
+
+
+
+
+
+                    
+                } catch (error) {
+                    console.error('Error al obtener las transacciones:', error);
+                }  
         },
         toggleForm() {
             this.showForm = !this.showForm;

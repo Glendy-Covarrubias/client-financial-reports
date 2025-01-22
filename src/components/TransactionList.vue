@@ -88,7 +88,7 @@
                                     type="checkbox"
                                     id="themeToggle"
                                     class="toggle-checkbox"
-                                    @change="deleteTransaction(transaction.transaccion_id)"
+                                    @change="inactiveTransaction(transaction._id)"
                                 />
                                 <!--<button class="text-red-500 hover:underline mx-2"
                                     @click="deleteTransaction(transaction.transaccion_id)">
@@ -115,7 +115,7 @@
      * Si el estado `showForm` es verdadero, se muestra un formulario para agregar o editar una transacción.
      */
 
-    import { computed, ref } from 'vue';
+    import { computed, ref, onMounted } from 'vue';
     import { useTransactionStore } from '@/stores/transactions';
     import TransactionForm from './TransactionForm.vue';
     import { ITransaction } from '@/interfaces/ITransaction';
@@ -132,6 +132,10 @@
     const filterType = ref('');
     const filterStartDate = ref('');
     const filterEndDate = ref('');
+
+    onMounted(() => {
+        store.fetchTransactions(); // Llama a la función para cargar las transacciones cuando el componente se monta
+    });
 
     // Computed para filtrar las transacciones según los criterios seleccionados
     const filteredTransactions = computed(() => {
@@ -164,8 +168,8 @@
         store.toggleForm();
     };
 
-    const deleteTransaction = (id: number) => {
-        store.deleteTransaction(id); // Eliminar transacción
+    const inactiveTransaction = (id: number) => {
+        store.inactiveTransaction(id); // Eliminar transacción
     };
 
     // Función para exportar las transacciones a XLSX

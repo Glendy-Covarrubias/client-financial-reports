@@ -133,8 +133,9 @@
     }
 
     const transaction: ITransaction = {
+        _id: selectedTransaction.value?._id,
         transaccion_id: selectedTransaction.value?.transaccion_id ?? Date.now(),
-        cliente_id: cliente_id.value,
+        cliente_id: 1,
         type: type.value.trim(),
         amount: amount.value ?? 0, // Si amount es null, se usa 0
         category: category.value,
@@ -147,6 +148,7 @@
     } else {
         store.addTransaction(transaction); // Agregar nueva transacción
     }
+    
 
     closeForm();
     };
