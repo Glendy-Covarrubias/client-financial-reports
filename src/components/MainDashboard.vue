@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 
-// Importa los componentes
+// Import de los componentes
 import TransactionManager from './TransactionManager.vue';
 import ViewingMetrics from './ViewingMetrics.vue';
 
@@ -65,5 +65,4 @@ const selectMenu = computed(() => {
 </script>
 
 <style scoped>
-/* Personaliza los estilos si es necesario */
 </style>
