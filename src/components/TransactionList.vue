@@ -7,7 +7,7 @@
         </div>
 
         <!-- Tabla que muestra las transacciones con filtros -->
-        <div v-else class="p-4 bg-gray-100 rounded shadow">
+        <div v-else class="p-4 dark:bg-gray-100 rounded shadow">
             <!-- Encabezado y botón para agregar una nueva transacción -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
                 <h3 class="text-2xl font-semibold">Lista de Transacciones</h3>
@@ -80,10 +80,16 @@
                                     @click="editTransaction(transaction)">
                                     Editar
                                 </button>
-                                <button class="text-red-500 hover:underline mx-2"
+                                <input
+                                    type="checkbox"
+                                    id="themeToggle"
+                                    class="toggle-checkbox"
+                                    @change="deleteTransaction(transaction.transaccion_id)"
+                                />
+                                <!--<button class="text-red-500 hover:underline mx-2"
                                     @click="deleteTransaction(transaction.transaccion_id)">
-                                    Eliminar
-                                </button>
+                                    Inhabilitar
+                                </button>-->
                             </td>
                         </tr>
                     </tbody>
@@ -130,9 +136,9 @@
             const matchesType = filterType.value !== '' ? transaction.type.toLowerCase().includes(filterType.value.toLowerCase()) : true;
             const matchesStartDate = filterStartDate.value ? new Date(transaction.date) >= new Date(filterStartDate.value) : true;
             const matchesEndDate = filterEndDate.value ? new Date(transaction.date) <= new Date(filterEndDate.value) : true;
-            const isActive = transaction.status !== 'inactiva'; // Excluir transacciones inactivas
+            //const isActive = transaction.status !== 'inactiva'; // Excluir transacciones inactivas isActive
 
-            return matchesClientID && matchesCategory && matchesType && matchesStartDate && matchesEndDate && isActive;
+            return matchesClientID && matchesCategory && matchesType && matchesStartDate && matchesEndDate;
         });
     });
 
@@ -157,3 +163,42 @@
         store.deleteTransaction(id); // Eliminar transacción
     };
 </script>
+
+<style scoped>
+/* Estilo del toggle switch */
+.toggle-checkbox {
+  width: 50px;
+  height: 25px;
+  border-radius: 50px;
+  
+  background-color: #4CAF50;
+  position: relative;
+  cursor: pointer;
+  appearance: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo cuando el toggle está activado (modo oscuro) */
+.toggle-checkbox:checked {
+  background-color: #ddd;
+}
+
+/* Estilo de la bolita interna del toggle */
+.toggle-checkbox::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s ease;
+  top: 50%;
+  left: 4px;
+  transform: translateY(-50%);
+}
+
+/* Estilo de la bolita cuando el toggle está activado */
+.toggle-checkbox:checked::before {
+  transform: translateX(25px) translateY(-50%);
+}
+</style>

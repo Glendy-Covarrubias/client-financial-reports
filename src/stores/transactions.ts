@@ -10,7 +10,7 @@ export const useTransactionStore = defineStore('transactions', {
 
     actions: {
         async fetchTransactions() {
-            // Aquí puedes simular una llamada API para obtener las transacciones
+            // Simulando mi llamada API
             const data: ITransaction[] = [];
             this.transactions = data;
         },
@@ -36,7 +36,12 @@ export const useTransactionStore = defineStore('transactions', {
             const index = this.transactions.findIndex(t => t.transaccion_id === id);
             if (index !== -1) {
                 // Actualiza la transacción en el índice encontrado
-                this.transactions[index].status = "inactiva";
+                if(this.transactions[index].status === "inactiva"){
+                    this.transactions[index].status = "activa";
+                } else {
+                    this.transactions[index].status = "inactiva";
+                }
+                
             }
         },
         toggleForm() {

@@ -2,7 +2,11 @@
     <div class="h-screen grid grid-cols-1 lg:grid-cols-[200px_1fr]">
         <!-- Sidebar -->
         <aside class="bg-gray-800 text-white p-4 lg:col-span-1">
-            <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+            <ThemeSwitcher />
+            <h1 class="text-2xl font-bold mb-6 mt-4">
+                Dashboard
+
+            </h1>
             <nav>
                 <ul>
                     <li>
@@ -46,6 +50,7 @@ import { ref, computed } from 'vue';
 // Import de los componentes
 import TransactionManager from './TransactionManager.vue';
 import ViewingMetrics from './ViewingMetrics.vue';
+import ThemeSwitcher from './ThemeSwitcher.vue';
 
 // Estado para almacenar el menú seleccionado
 const selectedMenu = ref('default');
