@@ -9,7 +9,7 @@
                 <label for="type" class="block text-sm font-medium text-gray-600">Tipo</label>
                 <select v-model="type" id="type"
                     class="border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                    :class="{'border-red-500': errors.type}" required>
+                    :class="{ 'border-red-500': errors.type }" required>
                     <option value="" disabled selected>Selecciona un tipo</option>
                     <option value="ingreso">ingreso</option>
                     <option value="gasto">gasto</option>
@@ -22,7 +22,7 @@
                 <label for="amount" class="block text-sm font-medium text-gray-600">Monto</label>
                 <input v-model.number="amount" type="number" id="amount"
                     class="border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                    :class="{'border-red-500': errors.amount}" placeholder="Ejemplo: 100.50" required />
+                    :class="{ 'border-red-500': errors.amount }" placeholder="Ejemplo: 100.50" required />
                 <p v-if="errors.amount" class="text-sm text-red-500">{{ errors.amount }}</p>
             </div>
 
@@ -31,7 +31,7 @@
                 <label for="category" class="block text-sm font-medium text-gray-600">Categoría</label>
                 <input v-model="category" type="text" id="category"
                     class="border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                    :class="{'border-red-500': errors.category}" placeholder="Ejemplo: Compras" required />
+                    :class="{ 'border-red-500': errors.category }" placeholder="Ejemplo: Compras" required />
                 <p v-if="errors.category" class="text-sm text-red-500">{{ errors.category }}</p>
             </div>
 
@@ -40,7 +40,7 @@
                 <label for="date" class="block text-sm font-medium text-gray-600">Fecha</label>
                 <input v-model="date" type="date" id="date"
                     class="border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                    :class="{'border-red-500': errors.date}" required />
+                    :class="{ 'border-red-500': errors.date }" required />
                 <p v-if="errors.date" class="text-sm text-red-500">{{ errors.date }}</p>
             </div>
 
@@ -75,19 +75,19 @@
 
     // Mensajes de error
     const errors = ref({
-    type: '',
-    amount: '',
-    category: '',
-    date: '',
+        type: '',
+        amount: '',
+        category: '',
+        date: '',
     });
 
     // Resetear el formulario
     const resetForm = () => {
-    cliente_id.value = 0;
-    type.value = '';
-    amount.value = null; // Se restablece a null
-    category.value = '';
-    date.value = '';
+        cliente_id.value = 0;
+        type.value = '';
+        amount.value = null; // Se restablece a null
+        category.value = '';
+        date.value = '';
     };
 
     // Computed para determinar si se está editando
@@ -96,67 +96,66 @@
 
     // Precargar datos de la transacción seleccionada
     watch(
-    selectedTransaction,
-    (transaction) => {
-        if (transaction) {
-        cliente_id.value = transaction.cliente_id;
-        type.value = transaction.type;
-        amount.value = transaction.amount;
-        category.value = transaction.category;
-        date.value = transaction.date;
-        } else {
-        resetForm();
-        }
-    },
-    { immediate: true }
+        selectedTransaction,
+        (transaction) => {
+            if (transaction) {
+                cliente_id.value = transaction.cliente_id;
+                type.value = transaction.type;
+                amount.value = transaction.amount;
+                category.value = transaction.category;
+                date.value = transaction.date;
+            } else {
+                resetForm();
+            }
+        },
+        { immediate: true }
     );
 
     // Validar el formulario
     const validateForm = () => {
-    errors.value.type = type.value ? '' : 'El tipo es obligatorio.';
-    errors.value.amount = (amount.value !== null) ? '' : 'El monto es obligatorio.';
-    errors.value.category = category.value ? '' : 'La categoría es obligatoria.';
-    errors.value.date = date.value ? '' : 'La fecha es obligatoria.';
+        errors.value.type = type.value ? '' : 'El tipo es obligatorio.';
+        errors.value.amount = (amount.value !== null) ? '' : 'El monto es obligatorio.';
+        errors.value.category = category.value ? '' : 'La categoría es obligatoria.';
+        errors.value.date = date.value ? '' : 'La fecha es obligatoria.';
     };
 
     // Computed property para verificar si el formulario es inválido
     const isFormInvalid = computed(() => {
-    validateForm();
-    return Object.values(errors.value).some(e => e !== '');
+        validateForm();
+        return Object.values(errors.value).some(e => e !== '');
     });
 
     // Enviar el formulario
     const submitForm = () => {
-    if (isFormInvalid.value) {
-        alert('Por favor, completa todos los campos correctamente.');
-        return;
-    }
+        if (isFormInvalid.value) {
+            alert('Por favor, completa todos los campos correctamente.');
+            return;
+        }
 
-    const transaction: ITransaction = {
-        _id: selectedTransaction.value?._id,
-        transaccion_id: selectedTransaction.value?.transaccion_id ?? Date.now(),
-        cliente_id: 1,
-        type: type.value.trim(),
-        amount: amount.value ?? 0, // Si amount es null, se usa 0
-        category: category.value,
-        date: date.value,
-        status: 'activa'
-    };
+        const transaction: ITransaction = {
+            transaccion_id: selectedTransaction.value?.transaccion_id ?? Date.now(),
+            cliente_id: 1,
+            type: type.value.trim(),
+            amount: amount.value ?? 0, // Si amount es null, se usa 0
+            category: category.value,
+            date: date.value,
+            status: 'activa'
+        };
 
-    if (isEditing.value) {
-        store.updateTransaction(transaction); // Actualizar transacción
-    } else {
-        store.addTransaction(transaction); // Agregar nueva transacción
-    }
-    
+        if (isEditing.value) {
+            store.updateTransaction(transaction, selectedTransaction.value?._id); // Actualizar transacción
+        } else {
+            store.addTransaction(transaction); // Agregar nueva transacción
+        }
 
-    closeForm();
+
+        closeForm();
     };
 
     // Cerrar el formulario
     const closeForm = () => {
-    store.toggleForm(); // Cerrar formulario
-    store.clearSelectedTransaction(); // Limpiar transacción seleccionada
-    resetForm(); // Resetear formulario
+        store.toggleForm(); // Cerrar formulario
+        store.clearSelectedTransaction(); // Limpiar transacción seleccionada
+        resetForm(); // Resetear formulario
     };
 </script>

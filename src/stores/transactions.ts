@@ -12,7 +12,7 @@ export const useTransactionStore = defineStore('transactions', {
     actions: {
         async fetchTransactions() {
             try {
-                const response = await axios.get(process.env.VUE_APP_URL_API); 
+                const response = await axios.get(process.env.VUE_APP_URL_API);
                 this.transactions = response.data; // Asigna los datos obtenidos al estado de las transacciones
                 return response.data;
             } catch (error) {
@@ -27,51 +27,42 @@ export const useTransactionStore = defineStore('transactions', {
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);
             }
-        },        
+        },
 
-        async updateTransaction(updatedTransaction: ITransaction) {
+        async updateTransaction(updatedTransaction: ITransaction, _id?: number) {
             try {
-                
-                console.log("URL :", updatedTransaction._id)
-                const response = await axios.put(`${process.env.VUE_APP_URL_API}/${updatedTransaction._id}`, updatedTransaction);
-                console.log("res :", response)
-                await this.fetchTransactions(); 
+                const response = await axios.put(`${process.env.VUE_APP_URL_API}/${_id}`, updatedTransaction);
+                await this.fetchTransactions();
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);
-            }  
+            }
         },
 
         async deleteTransaction(id: number) {
-                try {
-                    const response = await axios.delete(`${process.env.VUE_APP_URL_API}/${id}`);
-                    await this.fetchTransactions(); 
-                } catch (error) {
-                    console.error('Error al obtener las transacciones:', error);
-                }  
+            try {
+                const response = await axios.delete(`${process.env.VUE_APP_URL_API}/${id}`);
+                await this.fetchTransactions();
+            } catch (error) {
+                console.error('Error al obtener las transacciones:', error);
+            }
         },
+
         async inactiveTransaction(id: number) {
 
-                try {
+            try {
+                const data = await this.fetchTransactions();
+                const search_info = data.find((t: ITransaction) => t._id === id);
 
-                    
-                    const data = await this.fetchTransactions();
-                    /*const search = data.find((t: ITransaction) => t._id === id);
-                    if(search !== null || search !== undefined){
-                        // Actualiza la transacción en el índice encontrado
-                        search.status = search.status === "inactiva" ? "activa" : "inactiva";
-
-                        const response = await axios.put(`${process.env.VUE_APP_URL_API}/${search._id}`, search);
-                        await this.fetchTransactions(); 
-                    }*/
-
-
-
-
-
-                    
-                } catch (error) {
-                    console.error('Error al obtener las transacciones:', error);
-                }  
+                if (search_info !== null || search_info !== undefined) {
+                    // Actualiza la transacción en el índice encontrado
+                    search_info.status = search_info.status === "inactiva" ? "activa" : "inactiva";
+                    delete search_info._id;
+                    const response = await axios.put(`${process.env.VUE_APP_URL_API}/${id}`, search_info);
+                    await this.fetchTransactions();
+                }
+            } catch (error) {
+                console.error('Error al obtener las transacciones:', error);
+            }
         },
         toggleForm() {
             this.showForm = !this.showForm;

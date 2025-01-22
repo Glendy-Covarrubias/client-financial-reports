@@ -1,5 +1,5 @@
 export interface ITransaction {
-    _id?: any,
+    _id?: number,
     transaccion_id: number;
     cliente_id: number;
     amount: number;
