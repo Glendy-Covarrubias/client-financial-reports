@@ -11,10 +11,14 @@
             <!-- Encabezado y botón para agregar una nueva transacción -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
                 <h3 class="text-2xl font-semibold">Lista de Transacciones</h3>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4 sm:mt-0"
-                    @click="addTransaction">
-                    + Agregar Transacción
-                </button>
+                <div class="flex space-x-4">
+          <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4 sm:mt-0" @click="addTransaction">
+            + Agregar Transacción
+          </button>
+          <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4 sm:mt-0" @click="downloadXLSX">
+            Descargar XLSX
+          </button>
+        </div>
             </div>
 
             <!-- Filtros para buscar transacciones -->
@@ -115,6 +119,7 @@
     import { useTransactionStore } from '@/stores/transactions';
     import TransactionForm from './TransactionForm.vue';
     import { ITransaction } from '@/interfaces/ITransaction';
+    import * as XLSX from 'xlsx';
 
     // Store de transacciones
     const store = useTransactionStore();
@@ -162,6 +167,26 @@
     const deleteTransaction = (id: number) => {
         store.deleteTransaction(id); // Eliminar transacción
     };
+
+    // Función para exportar las transacciones a XLSX
+const downloadXLSX = () => {
+  const data = filteredTransactions.value.map(transaction => ({
+    ID: transaction.transaccion_id,
+    ClienteID: transaction.cliente_id,
+    Monto: transaction.amount,
+    Categoria: transaction.category,
+    Fecha: transaction.date,
+    Tipo: transaction.type,
+    Estado: transaction.status
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
+
+  // Descarga el archivo XLSX
+  XLSX.writeFile(wb, "transacciones.xlsx");
+};
 </script>
 
 <style scoped>
