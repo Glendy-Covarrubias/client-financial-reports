@@ -24,47 +24,12 @@ import { useThemeStore } from '@/stores/theme';
 // Obtener el store de tema
 const themeStore = useThemeStore();
 
-// Propiedad computada para `isDarkMode` que refleja el estado global
+// Propiedad computada para ver si es `isDarkMode` que refleja el estado global
 const isDarkMode = computed({
   get: () => themeStore.isDarkMode,
-  set: (value) => themeStore.toggleTheme(value),  // Pasamos el valor directamente al store
+  set: (value) => themeStore.toggleTheme(value),
 });
 </script>
 
 <style scoped>
-/* Estilo del toggle switch */
-.toggle-checkbox {
-  width: 50px;
-  height: 25px;
-  border-radius: 50px;
-  background-color: #ddd;
-  position: relative;
-  cursor: pointer;
-  appearance: none;
-  transition: background-color 0.3s ease;
-}
-
-/* Estilo cuando el toggle está activado (modo oscuro) */
-.toggle-checkbox:checked {
-  background-color: #4CAF50;
-}
-
-/* Estilo de la bolita interna del toggle */
-.toggle-checkbox::before {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: white;
-  transition: transform 0.3s ease;
-  top: 50%;
-  left: 4px;
-  transform: translateY(-50%);
-}
-
-/* Estilo de la bolita cuando el toggle está activado */
-.toggle-checkbox:checked::before {
-  transform: translateX(25px) translateY(-50%);
-}
 </style>

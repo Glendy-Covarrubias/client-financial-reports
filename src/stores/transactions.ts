@@ -10,6 +10,8 @@ export const useTransactionStore = defineStore('transactions', {
     }),
 
     actions: {
+
+        /**Funcionalidades para la integración de llamadas a las APIS */
         async fetchTransactions() {
             try {
                 const response = await axios.get(process.env.VUE_APP_URL_API);
@@ -62,6 +64,8 @@ export const useTransactionStore = defineStore('transactions', {
                 console.error('Error al obtener las transacciones:', error);
             }
         },
+
+        /**Funcionalidades auxiliares por interracción en la pantalla */
         toggleForm() {
             this.showForm = !this.showForm;
         },

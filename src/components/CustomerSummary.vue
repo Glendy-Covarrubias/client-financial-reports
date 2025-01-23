@@ -29,20 +29,14 @@
 <script setup lang="ts">
     import { computed } from 'vue';
     import { useTransactionStore } from '@/stores/transactions';
-    import { ITransaction } from '@/interfaces/ITransaction';
-
-    interface ClientSummary {
-        totalIncome: number;
-        totalExpenses: number;
-        count: number;
-    }
+    import { ITransaction, IClientSummary } from '@/interfaces/ITransaction';
 
     // Store de transacciones
     const store = useTransactionStore();
 
     // Calcular el resumen por cliente
     const clientSummary = computed(() => {
-        const summary: Record<number, ClientSummary> = {};
+        const summary: Record<number, IClientSummary> = {};
 
         store.transactions.forEach((transaction: ITransaction) => {
             const clientId = transaction.cliente_id;

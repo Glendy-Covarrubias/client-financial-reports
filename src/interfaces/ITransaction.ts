@@ -8,3 +8,9 @@ export interface ITransaction {
     type: string;
     status: string;
 }
+
+export interface IClientSummary {
+    totalIncome: number;
+    totalExpenses: number;
+    count: number;
+}

@@ -23,7 +23,8 @@
                 </div>
             </div>
 
-            <!-- Filtros para buscar transacciones -->
+            <!-- Filtros para buscar transacciones Nota: Por falta de tiempo este pudo ser desarrollado como componente para
+             retutilizar en el filtrado de gráficas FilterData.vue -->
             <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2">
                 <!-- Filtro por Cliente ID -->
                 <input v-model.number="filterClientID" type="number" placeholder="Filtrar por Cliente ID..."
@@ -57,15 +58,58 @@
             <!-- Tabla para mostrar las transacciones filtradas -->
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse border border-gray-300">
+                    <!-- Encabezado de la tabla con botones de ordenación -->
                     <thead class="bg-gray-200">
                         <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-left">TRANSACCION</th>
-                            <th class="border border-gray-300 px-4 py-2 text-left">CLIENTE ID</th>
-                            <th class="border border-gray-300 px-4 py-2 text-left">MONTO</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">CATEGORIA</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">FECHA</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">TIPO</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">ESTADO</th>
+                            <th @click="setSortConfig('transaccion_id')" class="cursor-pointer border border-gray-300 px-4 py-2 text-left">
+                                TRANSACCION
+                                <span v-if="sortConfig.column === 'transaccion_id'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
+                            <th @click="setSortConfig('cliente_id')" class="cursor-pointer border border-gray-300 px-4 py-2 text-left">
+                                CLIENTE ID
+                                <span v-if="sortConfig.column === 'cliente_id'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
+                            <th @click="setSortConfig('amount')" class="cursor-pointer border border-gray-300 px-4 py-2 text-left">
+                                MONTO
+                                <span v-if="sortConfig.column === 'amount'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
+                            <th @click="setSortConfig('category')" class="cursor-pointer border border-gray-300 px-4 py-2 text-center">
+                                CATEGORIA
+                                <span v-if="sortConfig.column === 'category'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
+                            <th @click="setSortConfig('date')" class="cursor-pointer border border-gray-300 px-4 py-2 text-center">
+                                FECHA
+                                <span v-if="sortConfig.column === 'date'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
+                            <th @click="setSortConfig('type')" class="cursor-pointer border border-gray-300 px-4 py-2 text-center">
+                                TIPO
+                                <span v-if="sortConfig.column === 'type'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
+                            <th @click="setSortConfig('status')" class="cursor-pointer border border-gray-300 px-4 py-2 text-center">
+                                ESTADO
+                                <span v-if="sortConfig.column === 'status'" class="ml-2">
+                                    {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+                                </span>
+                                <span v-else class="ml-2 opacity-50">↑↓</span>
+                            </th>
                             <th class="border border-gray-300 px-4 py-2 text-center">ACCIONES</th>
                         </tr>
                     </thead>
@@ -134,18 +178,21 @@
         store.fetchTransactions(); // Llama a la función para cargar las transacciones cuando el componente se monta
     });
 
-    // Computed para filtrar las transacciones según los criterios seleccionados
+   // Computed para filtrar y ordenar las transacciones
     const filteredTransactions = computed(() => {
-        return transactions.value.filter((transaction) => {
+        // Filtrar las transacciones como lo haces ahora
+        const filtered = transactions.value.filter((transaction) => {
             const matchesClientID = filterClientID.value !== null ? transaction.cliente_id === filterClientID.value : true;
             const matchesCategory = filterCategory.value !== '' ? transaction.category.toLowerCase().includes(filterCategory.value.toLowerCase()) : true;
             const matchesType = filterType.value !== '' ? transaction.type.toLowerCase().includes(filterType.value.toLowerCase()) : true;
             const matchesStartDate = filterStartDate.value ? new Date(transaction.date) >= new Date(filterStartDate.value) : true;
             const matchesEndDate = filterEndDate.value ? new Date(transaction.date) <= new Date(filterEndDate.value) : true;
-            //const isActive = transaction.status !== 'inactiva'; // Excluir transacciones inactivas isActive
 
             return matchesClientID && matchesCategory && matchesType && matchesStartDate && matchesEndDate;
         });
+
+        // Ordenar las transacciones
+        return filtered.sort(sortTransactions);
     });
 
     // Función para resetear filtros
@@ -193,43 +240,56 @@
         // Descarga el archivo XLSX
         XLSX.writeFile(wb, "transacciones.xlsx");
     };
+
+    // Estado de ordenación
+    const sortConfig = ref({
+        column: '',
+        direction: 'asc'  // Dirección del orden'asc'
+    });
+
+    // Función para ordenar las transacciones
+    const sortTransactions = (a: ITransaction, b: ITransaction) => {
+        const { column, direction } = sortConfig.value;
+
+        if (!column) return 0; // Si no hay columna seleccionada, no hacemos nada
+
+        const aValue = a[column as keyof ITransaction];
+        const bValue = b[column as keyof ITransaction];
+
+        if (aValue === undefined || bValue === undefined) return 0;
+
+        if (column === 'date') {
+            const aDate = new Date(aValue);
+            const bDate = new Date(bValue);
+            
+            // Verificamos que las fechas son válidas
+            if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) return 0; // Si alguna fecha no es válida, no ordenamos
+
+            return direction === 'asc'
+                ? aDate.getTime() - bDate.getTime()
+                : bDate.getTime() - aDate.getTime();
+        }
+
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return direction === 'asc' ? aValue - bValue : bValue - aValue;
+        }
+
+        return direction === 'asc'
+            ? aValue.toString().localeCompare(bValue.toString())
+            : bValue.toString().localeCompare(aValue.toString());
+    };
+
+    // Función para cambiar el criterio de ordenación
+    const setSortConfig = (column: string) => {
+        if (sortConfig.value.column === column) {
+            // Alternamos dirección
+            sortConfig.value.direction = sortConfig.value.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortConfig.value.column = column;
+            sortConfig.value.direction = 'asc';
+        }
+    };
 </script>
 
 <style scoped>
-    /* Estilo del toggle switch */
-    .toggle-checkbox {
-        width: 50px;
-        height: 25px;
-        border-radius: 50px;
-        background-color: #ddd;
-        position: relative;
-        cursor: pointer;
-        appearance: none;
-        transition: background-color 0.3s ease;
-        top: 6px;
-    }
-
-    /* Estilo cuando el toggle está activo*/
-    .toggle-checkbox:checked {
-        background-color: #4CAF50;
-    }
-
-    /* Estilo de la bolita interna del toggle */
-    .toggle-checkbox::before {
-        content: "";
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background-color: white;
-        transition: transform 0.3s ease;
-        top: 50%;
-        left: 4px;
-        transform: translateY(-50%);
-    }
-
-    /* Estilo de la bolita cuando el toggle está activado */
-    .toggle-checkbox:checked::before {
-        transform: translateX(25px) translateY(-50%);
-    }
 </style>

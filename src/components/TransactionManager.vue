@@ -13,8 +13,7 @@
     /**
     * Componente: Gestor de Transacciones
     * 
-    * Este componente sirve como contenedor principal para el listado de transacciones. 
-    * Incluye las acciones para la Creación, Edición, Eliminación del listado de transacciones. 
+    * Este componente sirve para montar el contenido que tendra esta sección del sistema
     * `TransactionList`, que es responsable de mostrar la lista de transacciones.
     * 
     * Este componente es la vista principal para gestionar las transacciones en el sistema.

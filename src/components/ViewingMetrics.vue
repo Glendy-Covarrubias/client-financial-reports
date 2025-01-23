@@ -8,19 +8,6 @@
 
         <!-- Cards contenedores -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <!-- Tarjeta para Category Analysis -->
-            <!--<div class="bg-white shadow rounded-lg p-4">
-                <h2 class="text-lg font-medium text-gray-700 mb-2">Análisis por categoría</h2>
-                <CategoryAnalysis />
-            </div>-->
-            <!-- <div class="bg-white shadow rounded-lg p-4 lg:col-span-3 max-h-64 overflow-auto">
-                <h2 class="text-lg font-medium text-gray-700 mb-2">Análisis por categoría</h2>
-                <CategoryAnalysis />
-            </div> -->
-            <!-- <div class="bg-white shadow rounded-lg p-4 lg:col-span-3">
-                <h2 class="text-lg font-medium text-gray-700 mb-2">Análisis por categoría</h2>
-                <CategoryAnalysis />
-            </div> -->
             <div class="bg-white shadow rounded-lg p-4">
                 <h2 class="text-lg font-medium text-gray-700 mb-2">Análisis por categoría</h2>
                 <CategoryAnalysis />
