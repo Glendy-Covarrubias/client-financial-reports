@@ -53,7 +53,7 @@ import ViewingMetrics from './ViewingMetrics.vue';
 import ThemeSwitcher from './ThemeSwitcher.vue';
 
 // Estado para almacenar el menú seleccionado
-const selectedMenu = ref('default');
+const selectedMenu = ref('transactions');
 
 // Computed para determinar el componente actual
 const selectMenu = computed(() => {

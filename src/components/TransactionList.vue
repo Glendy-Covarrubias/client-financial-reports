@@ -81,17 +81,14 @@
                             <td class="border border-gray-300 px-4 py-2">{{ transaction.type }}</td>
                             <td class="border border-gray-300 px-4 py-2">{{ transaction.status }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">
-                                <button class="text-blue-500 hover:underline mx-2"
+                                <button
+                                    class="bg-blue-500 text-white font-medium text-sm px-3 py-1 rounded shadow hover:bg-blue-600 hover:shadow-md transition duration-300 ease-in-out mx-2 max-h-80"
                                     @click="editTransaction(transaction)">
                                     Editar
                                 </button>
-                                <input type="checkbox" id="themeToggle" class="toggle-checkbox"
+                                <input type="checkbox" id="themeToggle"
+                                    :class="transaction.status === 'activa' ? 'toggle-checkbox' : 'toggle-checkbox toggle-inactive'"
                                     @change="transaction._id ? inactiveTransaction(transaction._id) : console.error('ID no válido')" />
-                                <!--Lo agrege para que pueda manejar con facilidad en mi interfaz vaciar mi tabla-->
-                                <button class="text-blue-500 hover:underline mx-2"
-                                    @click="transaction._id ? deleTransaction(transaction._id) : console.error('ID no válido')">
-                                    Delete
-                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -175,9 +172,6 @@
         store.inactiveTransaction(id); // Inactivar transacción
     };
 
-    const deleTransaction = (id: number) => {
-        store.deleteTransaction(id); // Eliminar transacción
-    };
 
     // Función para exportar las transacciones a XLSX
     const downloadXLSX = () => {
@@ -212,10 +206,11 @@
         cursor: pointer;
         appearance: none;
         transition: background-color 0.3s ease;
+        top: 6px;
     }
 
-    /* Estilo cuando el toggle está activado (modo oscuro) */
-    .toggle-checkbox:checked {
+    /* Estilo cuando el toggle está inactivo*/
+    .toggle-checkbox:checked, .toggle-inactive {
         background-color: #ddd;
     }
 
