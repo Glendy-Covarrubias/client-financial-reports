@@ -1,7 +1,6 @@
+<!--Análisis por categoría-->
 <template>
     <div class="p-4 bg-gray-50 rounded shadow">
-        <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Análisis por Categoría</h2>
-
         <!-- Contenedor del gráfico -->
         <div class="relative aspect-square sm:aspect-video">
             <canvas ref="categoryChart" class="w-full h-full"></canvas>
@@ -33,48 +32,69 @@
     const store = useTransactionStore();
 
     // Calculamos el desglose de ingresos y gastos por categoría
-    const categoryData = computed(() => {
-        const data = {
-            Alimentacion: 1,
-            Transporte: 2,
-            Entretenimiento: 0,
-            Otros: 0,
-        };
+    let categoryData = {};
 
-        store.transactions.forEach(transaction => {
-            if (transaction.category === 'Alimentación') {
-                data.Alimentacion += transaction.amount;
-            } else if (transaction.category === 'Transporte') {
-                data.Transporte += transaction.amount;
-            } else if (transaction.category === 'Entretenimiento') {
-                data.Entretenimiento += transaction.amount;
-            } else {
-                data.Otros += transaction.amount;
-            }
-        });
-
-        return data;
-    });
+    // Funcion para generar colores aletorios podria colocarse en otro lado del proyecto para reutilizar como un utilities
+    const generateRandomColor = (): string => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
 
     // Datos del gráfico (por categorías)
-    const chartData = computed(() => ({
-        labels: Object.keys(categoryData.value),
-        datasets: [
-            {
-                label: 'Ingresos y Gastos por Categoría',
-                data: Object.values(categoryData.value),
-                backgroundColor: ['#4CAF50', '#FF5722', '#03A9F4', '#9E9E9E'],
-                borderColor: ['#388E3C', '#D32F2F', '#0288D1', '#616161'],
-                borderWidth: 1,
-            },
-        ],
-    }));
+    const chartData = computed(() => {
+        const colors = new Set<string>(); // Set para asegurar colores únicos
+
+        // Generar colores únicos para backgroundColor y borderColor
+        const backgroundColor: string[] = [];
+        const borderColor: string[] = [];
+
+        // Recorrer las categorías y asignar colores únicos
+        Object.keys(categoryData).forEach(() => {
+            let randomColor;
+            // Asegurarse de que el color no se repita
+            do {
+                randomColor = generateRandomColor();
+            } while (colors.has(randomColor));
+
+            // Agregar el color al set y las listas
+            colors.add(randomColor);
+            backgroundColor.push(randomColor);
+            borderColor.push(randomColor);
+        });
+
+        return {
+            labels: Object.keys(categoryData),
+            datasets: [
+                {
+                    label: 'Ingresos y Gastos por Categoría',
+                    data: Object.values(categoryData),
+                    backgroundColor, // Colores de fondo
+                    borderColor,     // Colores de borde
+                    borderWidth: 1,
+                },
+            ],
+        };
+    });
 
     // Formateo de montos
     const formatAmount = (value: number) => `$${value.toFixed(2)}`;
 
     // Inicializa el gráfico
     onMounted(() => {
+
+        // Creación de un objeto dinamico con categorías como claves y el total de `amount` como valor
+        categoryData = store.transactions.reduce((acc: { [key: string]: number }, transaction) => {
+            if (!acc[transaction.category]) {
+                acc[transaction.category] = 0;
+            }
+            acc[transaction.category] += transaction.amount;
+            return acc;
+        }, {});
+
         if (categoryChart.value) {
             new Chart(categoryChart.value, {
                 type: 'pie',

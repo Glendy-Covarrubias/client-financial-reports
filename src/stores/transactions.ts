@@ -24,6 +24,7 @@ export const useTransactionStore = defineStore('transactions', {
             try {
                 const response = await axios.post(process.env.VUE_APP_URL_API, transaction);
                 await this.fetchTransactions(); // Hacemos la recarga para los nuevos datos ingresados
+                return response;
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);
             }
@@ -33,6 +34,7 @@ export const useTransactionStore = defineStore('transactions', {
             try {
                 const response = await axios.put(`${process.env.VUE_APP_URL_API}/${_id}`, updatedTransaction);
                 await this.fetchTransactions();
+                return response;
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);
             }
@@ -42,6 +44,7 @@ export const useTransactionStore = defineStore('transactions', {
             try {
                 const response = await axios.delete(`${process.env.VUE_APP_URL_API}/${id}`);
                 await this.fetchTransactions();
+                return response;
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);
             }
@@ -59,6 +62,7 @@ export const useTransactionStore = defineStore('transactions', {
                     delete search_info._id;
                     const response = await axios.put(`${process.env.VUE_APP_URL_API}/${id}`, search_info);
                     await this.fetchTransactions();
+                    return response;
                 }
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);

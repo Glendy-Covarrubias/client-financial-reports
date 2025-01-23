@@ -1,6 +1,6 @@
+<!--Resumen por cliente-->
 <template>
     <div class="p-4 bg-white rounded shadow">
-        <h2 class="text-lg font-medium text-gray-700 mb-4">Resumen por Cliente</h2>
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-200">
                 <thead class="bg-gray-100">
