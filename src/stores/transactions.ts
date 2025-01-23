@@ -50,17 +50,11 @@ export const useTransactionStore = defineStore('transactions', {
             }
         },
 
-        async inactiveTransaction(id: number) {
-
+        async inactiveTransaction(id: number, updatedTransaction: ITransaction) {
             try {
-                const data = await this.fetchTransactions();
-                const search_info = data.find((t: ITransaction) => t._id === id);
-
-                if (search_info !== null || search_info !== undefined) {
-                    // Actualiza la transacción en el índice encontrado
-                    search_info.status = search_info.status === "inactiva" ? "activa" : "inactiva";
-                    delete search_info._id;
-                    const response = await axios.put(`${process.env.VUE_APP_URL_API}/${id}`, search_info);
+                if (updatedTransaction !== null || updatedTransaction !== undefined) {
+                    delete updatedTransaction._id;
+                    const response = await axios.put(`${process.env.VUE_APP_URL_API}/${id}`, updatedTransaction);
                     await this.fetchTransactions();
                     return response;
                 }

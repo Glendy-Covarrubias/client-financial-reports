@@ -87,8 +87,10 @@
                                     Editar
                                 </button>
                                 <input type="checkbox" id="themeToggle"
-                                    :class="transaction.status === 'activa' ? 'toggle-checkbox' : 'toggle-checkbox toggle-inactive'"
-                                    @change="transaction._id ? inactiveTransaction(transaction._id) : console.error('ID no válido')" />
+                                    v-model="transaction.status"
+                                    :true-value="'activa'" :false-value="'inactiva'"
+                                    class="toggle-checkbox"
+                                    @change="transaction._id ? inactiveTransaction(transaction._id, transaction) : console.error('ID no válido')" />
                             </td>
                         </tr>
                     </tbody>
@@ -168,10 +170,9 @@
         store.toggleForm();
     };
 
-    const inactiveTransaction = (id: number) => {
-        store.inactiveTransaction(id); // Inactivar transacción
+    const inactiveTransaction = (id: number, transaction: ITransaction) => {
+        store.inactiveTransaction(id, transaction); // Inactivar transacción
     };
-
 
     // Función para exportar las transacciones a XLSX
     const downloadXLSX = () => {
@@ -200,8 +201,7 @@
         width: 50px;
         height: 25px;
         border-radius: 50px;
-
-        background-color: #4CAF50;
+        background-color: #ddd;
         position: relative;
         cursor: pointer;
         appearance: none;
@@ -209,9 +209,9 @@
         top: 6px;
     }
 
-    /* Estilo cuando el toggle está inactivo*/
-    .toggle-checkbox:checked, .toggle-inactive {
-        background-color: #ddd;
+    /* Estilo cuando el toggle está activo*/
+    .toggle-checkbox:checked {
+        background-color: #4CAF50;
     }
 
     /* Estilo de la bolita interna del toggle */

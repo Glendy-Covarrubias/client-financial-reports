@@ -2,7 +2,7 @@
   <div class="flex justify-center items-center space-x-2">
     <!-- Etiqueta para el toggle -->
     <label for="themeToggle" class="text-sm text-gray-600 text-gray-200">
-      {{ isDarkMode ? 'Modo Claro' : 'Modo Oscuro' }}
+      {{ isDarkMode ? 'Modo Oscuro' : 'Modo Claro' }}
     </label>
     
     <!-- El Toggle Switch -->
