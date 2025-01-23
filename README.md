@@ -1,5 +1,9 @@
 # client-financial-reports
 
+## Version de node
+![version_node](https://github.com/user-attachments/assets/b9464217-5937-4322-b195-0a73a32aec19)
+
+
 ## Project setup / Paso 1) Instalar las dependencias
 ```
 npm install
